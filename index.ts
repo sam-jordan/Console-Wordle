@@ -17,6 +17,7 @@ interface Letter {
     colour: string
 };
 
+// Defining the Zod schema for user input (5 character string transformed to upper case)
 const ZodGuess = z.string().length(5).toUpperCase();
 
 export default class Game {
@@ -65,10 +66,10 @@ export default class Game {
     }
 
     /**
-     * Checks that a word is in the list of valid 5-letter words and has not already been guessed.
+     * Checks that a word is a valid 5 letter word that has not already been guessed.
      * 
      * @param guess - The guesssed word that needs to be validated
-     * @returns A boolean indicating the validity of the guess
+     * @returns A validated deep copy of the original guess (transformed to upper case)
      */
     checkValidGuess(guess: string): string {
         // Constructs an array of all previous guesses as strings for comparison
@@ -160,7 +161,7 @@ export default class Game {
     /**
      * @param status - Status code determining which message to return
      * @param guessNumber - The number of the current guess
-     * @returns - A message revealing the solution and the outcome of the game
+     * @returns - A message revealing the solution and the outcome of the game, or an error message
      */
     getEndMessage(status: 0 | 1, guessNumber: number): string {
         switch(status) {
