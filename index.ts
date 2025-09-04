@@ -52,10 +52,11 @@ export default class Game {
             try {
                 this.checkCorrectness(this.checkValidGuess(guess));
                 this.display();
-                this.checkGameOver(guessNumber);
+                const status = this.checkGameOver(guessNumber);
                 if (!this.gameOver) {
                     this.gameLoop(guessNumber + 1);
                 } else {
+                    console.log(this.getEndMessage(status, guessNumber))
                     rl.close();
                 }
             } catch {
@@ -85,8 +86,9 @@ export default class Game {
      * wrongly, or incorrect.
      * 
      * @param guess - The guessed word to be checked 
+     * @return An array of Letter objects representing the guessed word's characters and their correctness
      */
-    checkCorrectness(guess: string): void {
+    checkCorrectness(guess: string): Letter[] {
         // Creates a copy of the solution for comparison
         const comparison: string[] = [...this.#solution];
         const checkedGuess: Letter[] = new Array(5);
@@ -117,6 +119,7 @@ export default class Game {
             this.unusedLetters.delete(guess[i]);
         }
         this.guesses.push(checkedGuess);
+        return checkedGuess;
     }
 
     /**
@@ -124,20 +127,21 @@ export default class Game {
      * 
      * @param guessNumber - The number of the current guess 
      */
-    checkGameOver(guessNumber: number): void {
+    checkGameOver(guessNumber: number): number {
         const latestGuess = this.guesses.at(-1);
         // Gets the colour of each character of the latest guess
         const latestGuessColours = latestGuess !== undefined ? latestGuess.map(guessLetter => guessLetter.colour) : [];
         // If every character is green (correct), user wins
         if (guessNumber > 1 && latestGuessColours.every(val => val === '\x1b[32m')) {
             this.gameOver = true;
-            console.log(this.getEndMessage(0, guessNumber));
+            return 1
         }
         // If the user has had 6 guesses (and didn't guess a correct answer on the 6th), they lose
         if (guessNumber >= 6 && !latestGuessColours.every(val => val === '\x1b[32m')) {
             this.gameOver = true;
-            console.log(this.getEndMessage(1, guessNumber));
+            return 2
         }
+        return 0;
     }
 
     /**
@@ -163,11 +167,11 @@ export default class Game {
      * @param guessNumber - The number of the current guess
      * @returns - A message revealing the solution and the outcome of the game, or an error message
      */
-    getEndMessage(status: 0 | 1, guessNumber: number): string {
+    getEndMessage(status: number, guessNumber: number): string {
         switch(status) {
-            case 0:
+            case 1:
                 return `The word was ${this.#solution.join('')}! You got it in ${guessNumber} guesses.`;
-            case 1: 
+            case 2: 
                 return `So close! The word was ${this.#solution.join('')}.`;
             default:
                 return 'Invalid status code.'
