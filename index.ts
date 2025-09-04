@@ -78,6 +78,8 @@ export default class Game {
         const stringGuesses = this.guesses.map(guess => guess.map(guessLetter => guessLetter.character).join(''));
         if (parsedGuess.success && validWords.indexOf(parsedGuess.data) !== -1 && stringGuesses.indexOf(parsedGuess.data) === -1) {
             return parsedGuess.data;
+        } else {
+            throw new Error;
         }
     }
 
