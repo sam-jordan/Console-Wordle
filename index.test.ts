@@ -12,11 +12,35 @@ describe('checkValidGuess function', () => {
         expect(testGame.checkValidGuess('TOucH')).toBe('TOUCH');
     });
 
-    it.skip('should throw an error when "12345" submitted', () => {
-        expect(testGame.checkValidGuess('12345')).toBe(Error);
+    it('should throw an error when "12345" submitted', () => {
+        expect(() => testGame.checkValidGuess('12345')).toThrow();
+    })
+
+    it('should throw an error when "aaaaa" submitted', () => {
+        expect(() => testGame.checkValidGuess('aaaaa')).toThrow();
+    })
+
+    it('should throw an error when "nights" submitted', () => {
+        expect(() => testGame.checkValidGuess('nights')).toThrow();
+    })
+
+    it('should throw an error when "ape" submitted', () => {
+        expect(() => testGame.checkValidGuess('ape')).toThrow();
+    })
+
+    testGame.guesses.push([
+        {character: 'S', colour: '\x1b[33m'}, 
+        {character: 'M', colour: '\x1b[33m'}, 
+        {character: 'A', colour: '\x1b[33m'},
+        {character: 'R', colour: '\x1b[33m'},
+        {character: 'T', colour: '\x1b[33m'}
+    ]);
+    it('should throw an error when "smart" submitted', () => {
+        expect(() => testGame.checkValidGuess('smart')).toThrow();
     })
 });
 
+/**
 describe('checkCorrectness function', () => {
     //it('should return ')
 });
@@ -24,6 +48,7 @@ describe('checkCorrectness function', () => {
 describe('checkGameOver function', () => {
 
 });
+*/
 
 describe('getEndMessage function', () => {
     it('should return a win message when called with status code 1', () => {

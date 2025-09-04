@@ -25,7 +25,7 @@ export default class Game {
     guesses: Letter[][] = [];
     wrongLetters: Set<string> = new Set();
     unusedLetters: Set<string>;
-    gameOver: boolean = false;
+    gameStatus: number = 0;
 
     /**
      * Class representing a single game of console-based Wordle.
@@ -34,7 +34,7 @@ export default class Game {
      * @param guesses - An array of arrays of Letter objects
      * @param wrongLetters - A set of incorrectly guessed characters
      * @param unusedLetters - A set of characters that have yet to be guessed
-     * @param gameOver - A boolean representing whether the game has ended or not
+     * @param gameStatus - A number representing the game state: 0 for playing, 1 for won, 2 for lost
      */
     constructor() {
         this.solution = validWords[Math.floor(Math.random() * validWords.length)].toUpperCase().split('');
@@ -52,11 +52,13 @@ export default class Game {
             try {
                 this.checkCorrectness(this.checkValidGuess(guess));
                 this.display();
-                const status = this.checkGameOver(guessNumber);
-                if (!this.gameOver) {
+                this.gameStatus = this.checkGameOver(guessNumber);
+                // If the game is still running
+                if (this.gameStatus === 0) {
                     this.gameLoop(guessNumber + 1);
+                // If the game has ended
                 } else {
-                    console.log(this.getEndMessage(status, guessNumber))
+                    console.log(this.getEndMessage(this.gameStatus, guessNumber))
                     rl.close();
                 }
             } catch {
@@ -79,7 +81,8 @@ export default class Game {
         if (parsedGuess.success && validWords.indexOf(parsedGuess.data) !== -1 && stringGuesses.indexOf(parsedGuess.data) === -1) {
             return parsedGuess.data;
         } else {
-            throw new Error;
+            // Won't actually be displayed, thrown to trigger the catch block
+            throw new Error('Invalid guess!');
         }
     }
 
@@ -128,6 +131,7 @@ export default class Game {
      * Determines if the game has ended (answer correctly guessed or 6 incorrect guesses reached) and displays a message.
      * 
      * @param guessNumber - The number of the current guess 
+     * @return A status code representing the current game state
      */
     checkGameOver(guessNumber: number): number {
         const latestGuess = this.guesses.at(-1);
@@ -135,12 +139,10 @@ export default class Game {
         const latestGuessColours = latestGuess !== undefined ? latestGuess.map(guessLetter => guessLetter.colour) : [];
         // If every character is green (correct), user wins
         if (guessNumber > 1 && latestGuessColours.every(val => val === '\x1b[32m')) {
-            this.gameOver = true;
             return 1
         }
         // If the user has had 6 guesses (and didn't guess a correct answer on the 6th), they lose
         if (guessNumber >= 6 && !latestGuessColours.every(val => val === '\x1b[32m')) {
-            this.gameOver = true;
             return 2
         }
         return 0;
