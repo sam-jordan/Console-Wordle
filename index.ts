@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import process from 'node:process';
 
 // Reads in an array of valid 5-letter words from file (originally sourced from https://www-cs-faculty.stanford.edu/~knuth/sgb-words.txt)
-const validWords: string[] = fs.readFileSync('sgb-words.txt', 'utf-8').split("\n");
+const validWords: string[] = fs.readFileSync('sgb-words.txt', 'utf-8').split("\r\n");
 
 const rl = readline.createInterface({
     input: process.stdin,
