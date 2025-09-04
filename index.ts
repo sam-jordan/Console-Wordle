@@ -19,7 +19,7 @@ interface Letter {
 
 const ZodGuess = z.string().length(5).toUpperCase();
 
-class Game {
+export default class Game {
     #solution: string[];
     guesses: Letter[][] = [];
     wrongLetters: Set<string> = new Set();
@@ -168,6 +168,8 @@ class Game {
                 return `The word was ${this.#solution.join('')}! You got it in ${guessNumber} guesses.`;
             case 1: 
                 return `So close! The word was ${this.#solution.join('')}.`;
+            default:
+                return 'Invalid status code.'
         }
     }
 }
