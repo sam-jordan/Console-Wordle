@@ -21,7 +21,7 @@ interface Letter {
 const ZodGuess = z.string().length(5).toUpperCase();
 
 export default class Game {
-    #solution: string[];
+    solution: string[];
     guesses: Letter[][] = [];
     wrongLetters: Set<string> = new Set();
     unusedLetters: Set<string>;
@@ -30,14 +30,14 @@ export default class Game {
     /**
      * Class representing a single game of console-based Wordle.
      * 
-     * @param #solution - A 5-letter word randomly chosen from the valid list 
+     * @param solution - A 5-letter word randomly chosen from the valid list 
      * @param guesses - An array of arrays of Letter objects
      * @param wrongLetters - A set of incorrectly guessed characters
      * @param unusedLetters - A set of characters that have yet to be guessed
      * @param gameOver - A boolean representing whether the game has ended or not
      */
     constructor() {
-        this.#solution = validWords[Math.floor(Math.random() * validWords.length)].toUpperCase().split('');
+        this.solution = validWords[Math.floor(Math.random() * validWords.length)].toUpperCase().split('');
         this.unusedLetters = new Set([...'ABCDEFGHIJKLMNOPQRSTUVWXYZ']);
     }
 
@@ -92,7 +92,7 @@ export default class Game {
      */
     checkCorrectness(guess: string): Letter[] {
         // Creates a copy of the solution for comparison
-        const comparison: string[] = [...this.#solution];
+        const comparison: string[] = [...this.solution];
         const checkedGuess: Letter[] = new Array(5);
         // Checking for correct answers - needs to be done first
         for (let i = 0; i < guess.length; i++) {
@@ -172,9 +172,9 @@ export default class Game {
     getEndMessage(status: number, guessNumber: number): string {
         switch(status) {
             case 1:
-                return `The word was ${this.#solution.join('')}! You got it in ${guessNumber} guesses.`;
+                return `The word was ${this.solution.join('')}! You got it in ${guessNumber} guesses.`;
             case 2: 
-                return `So close! The word was ${this.#solution.join('')}.`;
+                return `So close! The word was ${this.solution.join('')}.`;
             default:
                 return 'Invalid status code.'
         }
