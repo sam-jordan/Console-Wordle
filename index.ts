@@ -1,6 +1,7 @@
 import * as readline from 'readline';
 import * as fs from 'fs';
 import process from 'node:process';
+import * as z from 'zod';
 
 // Reads in an array of valid 5-letter words from file (originally sourced from https://www-cs-faculty.stanford.edu/~knuth/sgb-words.txt)
 const validWords: string[] = fs.readFileSync('sgb-words.txt', 'utf-8').split("\r\n").map(word => word.toUpperCase());
@@ -15,6 +16,8 @@ interface Letter {
     character: string,
     colour: string
 };
+
+const ZodGuess = z.string().length(5).toUpperCase();
 
 class Game {
     #solution: string[];
@@ -44,9 +47,9 @@ class Game {
      * @param guessNumber - The number of the current guess (Only called with 1 outside itself)
      */
     gameLoop(guessNumber: number): void {
-        rl.question(`Guess ${guessNumber}: `, (answer) => {
-            if (this.checkValidGuess(answer.toUpperCase())) {
-                this.checkCorrectness(answer.toUpperCase());
+        rl.question(`Guess ${guessNumber}: `, (guess) => {
+            try {
+                this.checkCorrectness(this.checkValidGuess(guess));
                 this.display();
                 this.checkGameOver(guessNumber);
                 if (!this.gameOver) {
@@ -54,8 +57,8 @@ class Game {
                 } else {
                     rl.close();
                 }
-            } else {
-                console.log('Invalid guess!');
+            } catch {
+                console.error('\x1b[31m%s\x1b[0m', 'Invalid guess!');
                 this.gameLoop(guessNumber);
             }
         });
@@ -67,13 +70,12 @@ class Game {
      * @param guess - The guesssed word that needs to be validated
      * @returns A boolean indicating the validity of the guess
      */
-    checkValidGuess(guess: string): boolean {
+    checkValidGuess(guess: string): string {
         // Constructs an array of all previous guesses as strings for comparison
+        const parsedGuess = ZodGuess.safeParse(guess);
         const stringGuesses = this.guesses.map(guess => guess.map(guessLetter => guessLetter.character).join(''));
-        if (validWords.indexOf(guess) !== -1 && stringGuesses.indexOf(guess) === -1) {
-            return true;
-        } else {
-            return false;
+        if (parsedGuess.success && validWords.indexOf(parsedGuess.data) !== -1 && stringGuesses.indexOf(parsedGuess.data) === -1) {
+            return parsedGuess.data;
         }
     }
 
