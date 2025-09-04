@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import process from 'node:process';
 
 // Reads in an array of valid 5-letter words from file (originally sourced from https://www-cs-faculty.stanford.edu/~knuth/sgb-words.txt)
-const validWords: string[] = fs.readFileSync('sgb-words.txt', 'utf-8').split("\r\n");
+const validWords: string[] = fs.readFileSync('sgb-words.txt', 'utf-8').split("\r\n").map(word => word.toUpperCase());
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -34,8 +34,7 @@ class Game {
      */
     constructor() {
         this.#solution = validWords[Math.floor(Math.random() * validWords.length)].toUpperCase().split('');
-        this.unusedLetters = new Set(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
-            'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']);
+        this.unusedLetters = new Set([...'ABCDEFGHIJKLMNOPQRSTUVWXYZ']);
     }
 
     /**
@@ -46,7 +45,7 @@ class Game {
      */
     gameLoop(guessNumber: number): void {
         rl.question(`Guess ${guessNumber}: `, (answer) => {
-            if (this.checkValidGuess(answer)) {
+            if (this.checkValidGuess(answer.toUpperCase())) {
                 this.checkCorrectness(answer.toUpperCase());
                 this.display();
                 this.checkGameOver(guessNumber);
@@ -70,8 +69,8 @@ class Game {
      */
     checkValidGuess(guess: string): boolean {
         // Constructs an array of all previous guesses as strings for comparison
-        const stringGuesses = this.guesses.map(guess => guess.map(guessLetter => guessLetter.character.toLowerCase()).join(''));
-        if (validWords.indexOf(guess.toLowerCase()) !== -1 && stringGuesses.indexOf(guess) === -1) {
+        const stringGuesses = this.guesses.map(guess => guess.map(guessLetter => guessLetter.character).join(''));
+        if (validWords.indexOf(guess) !== -1 && stringGuesses.indexOf(guess) === -1) {
             return true;
         } else {
             return false;
@@ -144,9 +143,10 @@ class Game {
     display(): void {
         console.log('----------------------------');
         for (const i of this.guesses) {
-            // 
+            // Creates a string of the colour code for each letter
             const colourString: string = i.map(guess => guess.colour + '%s').join('') + '\x1b[0m';
             const letters: string[] = i.map(guess => guess.character);
+            // Displays the colour string and the array
             console.log(colourString, ...letters);
         }
         console.log('----------------------------');
