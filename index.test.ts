@@ -4,11 +4,11 @@ import Game from "./index.js";
 describe('checkValidWord function', () => {
     const testGame = new Game();
     testGame.guesses.push([
-        {character: 'S', colour: '\x1b[33m'}, 
-        {character: 'M', colour: '\x1b[33m'}, 
-        {character: 'A', colour: '\x1b[33m'},
-        {character: 'R', colour: '\x1b[33m'},
-        {character: 'T', colour: '\x1b[33m'}
+        {character: 'S', accuracy: 'correct'}, 
+        {character: 'M', accuracy: 'correct'}, 
+        {character: 'A', accuracy: 'correct'},
+        {character: 'R', accuracy: 'correct'},
+        {character: 'T', accuracy: 'correct'}
     ]);
 
     it('should return a parsed string when "reach" submitted', () => {
@@ -55,11 +55,11 @@ describe('checkGameOver function', () => {
     describe('checkGameOver game lost', () => {
         const lostGame = new Game();
         lostGame.guesses.push([
-            {character: 'S', colour: '\x1b[0m'}, 
-            {character: 'M', colour: '\x1b[0m'}, 
-            {character: 'A', colour: '\x1b[0m'},
-            {character: 'R', colour: '\x1b[0m'},
-            {character: 'T', colour: '\x1b[0m'}
+            {character: 'S', accuracy: 'incorrect'}, 
+            {character: 'M', accuracy: 'incorrect'}, 
+            {character: 'A', accuracy: 'incorrect'},
+            {character: 'R', accuracy: 'incorrect'},
+            {character: 'T', accuracy: 'incorrect'}
         ]);
 
         it('should return 2 when guess number is 6 and the latest guess is incorrect', () => {
@@ -70,11 +70,11 @@ describe('checkGameOver function', () => {
     describe('checkGameOver game won', () => {
         const wonGame = new Game();
         wonGame.guesses.push([
-            {character: 'S', colour: '\x1b[32m'}, 
-            {character: 'M', colour: '\x1b[32m'}, 
-            {character: 'A', colour: '\x1b[32m'},
-            {character: 'R', colour: '\x1b[32m'},
-            {character: 'T', colour: '\x1b[32m'}
+            {character: 'S', accuracy: 'correct'}, 
+            {character: 'M', accuracy: 'correct'}, 
+            {character: 'A', accuracy: 'correct'},
+            {character: 'R', accuracy: 'correct'},
+            {character: 'T', accuracy: 'correct'}
         ]);
 
         it('should return 1 when guess number is 2 and the latest guess is correct', () => {
