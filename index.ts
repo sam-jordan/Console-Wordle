@@ -2,9 +2,10 @@ import * as readline from 'readline';
 import * as fs from 'fs';
 import process from 'node:process';
 import * as z from 'zod';
+import { EOL } from 'node:os';
 
 // Reads in an array of valid 5-letter words from file (originally sourced from https://www-cs-faculty.stanford.edu/~knuth/sgb-words.txt)
-const validWords: string[] = fs.readFileSync('./sgb-words.txt', 'utf-8').split("\r\n").map(word => word.toUpperCase());
+const validWords: string[] = fs.readFileSync('./sgb-words.txt', 'utf-8').split(EOL).map(word => word.toUpperCase());
 
 const rl = readline.createInterface({
     input: process.stdin,
