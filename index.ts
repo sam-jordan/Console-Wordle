@@ -4,7 +4,7 @@ import process from 'node:process';
 import * as z from 'zod';
 
 // Reads in an array of valid 5-letter words from file (originally sourced from https://www-cs-faculty.stanford.edu/~knuth/sgb-words.txt)
-const validWords: string[] = fs.readFileSync('sgb-words.txt', 'utf-8').split("\r\n").map(word => word.toUpperCase());
+const validWords: string[] = fs.readFileSync('./sgb-words.txt', 'utf-8').split("\r\n").map(word => word.toUpperCase());
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -20,6 +20,7 @@ interface Letter {
 // Defining the Zod schema for user input (5 character string transformed to upper case)
 const ZodGuess = z.string().length(5).toUpperCase();
 
+// TODO - Look into adding support for custom answers in the constructor - would need to rename the Zod schema 
 export default class Game {
     solution: string[];
     guesses: Letter[][] = [];
