@@ -19,11 +19,10 @@ interface Letter {
 };
 
 // Defining the Zod schema for user input (5 character string transformed to upper case)
-const ZodGuess = z.string().length(5).toUpperCase();
+const ZodValidWord = z.string().length(5).toUpperCase();
 
-// TODO - Look into adding support for custom answers in the constructor - would need to rename the Zod schema 
 export default class Game {
-    solution: string[];
+    #solution: string[];
     guesses: Letter[][] = [];
     wrongLetters: Set<string> = new Set();
     unusedLetters: Set<string>;
@@ -32,14 +31,22 @@ export default class Game {
     /**
      * Class representing a single game of console-based Wordle.
      * 
-     * @param solution - A 5-letter word randomly chosen from the valid list 
+     * @param #solution - A 5-letter word randomly chosen from the valid list 
      * @param guesses - An array of arrays of Letter objects
      * @param wrongLetters - A set of incorrectly guessed characters
      * @param unusedLetters - A set of characters that have yet to be guessed
      * @param gameStatus - A number representing the game state: 0 for playing, 1 for won, 2 for lost
      */
-    constructor() {
-        this.solution = validWords[Math.floor(Math.random() * validWords.length)].toUpperCase().split('');
+    constructor(solution?: string) {
+        if(solution) {
+            try {
+                this.#solution = this.checkValidWord(solution).split('');
+            } catch (error) {
+                console.error(error)
+            }
+        } else {
+            this.#solution = validWords[Math.floor(Math.random() * validWords.length)].split('');
+        }
         this.unusedLetters = new Set([...'ABCDEFGHIJKLMNOPQRSTUVWXYZ']);
     }
 
@@ -52,7 +59,7 @@ export default class Game {
     gameLoop(guessNumber: number): void {
         rl.question(`Guess ${guessNumber}: `, (guess) => {
             try {
-                this.checkCorrectness(this.checkValidGuess(guess));
+                this.checkCorrectness(this.checkValidWord(guess));
                 this.display();
                 this.gameStatus = this.checkGameOver(guessNumber);
                 // If the game is still running
@@ -76,9 +83,9 @@ export default class Game {
      * @param guess - The guesssed word that needs to be validated
      * @returns A validated deep copy of the original guess (transformed to upper case)
      */
-    checkValidGuess(guess: string): string {
+    checkValidWord(guess: string): string {
         // Constructs an array of all previous guesses as strings for comparison
-        const parsedGuess = ZodGuess.safeParse(guess);
+        const parsedGuess = ZodValidWord.safeParse(guess);
         const stringGuesses = this.guesses.map(guess => guess.map(guessLetter => guessLetter.character).join(''));
         if (parsedGuess.success && validWords.indexOf(parsedGuess.data) !== -1 && stringGuesses.indexOf(parsedGuess.data) === -1) {
             return parsedGuess.data;
@@ -97,7 +104,7 @@ export default class Game {
      */
     checkCorrectness(guess: string): Letter[] {
         // Creates a copy of the solution for comparison
-        const comparison: string[] = [...this.solution];
+        const comparison: string[] = [...this.#solution];
         const checkedGuess: Letter[] = new Array(5);
         // Checking for correct answers - needs to be done first
         for (let i = 0; i < guess.length; i++) {
@@ -176,9 +183,9 @@ export default class Game {
     getEndMessage(status: number, guessNumber: number): string {
         switch(status) {
             case 1:
-                return `The word was ${this.solution.join('')}! You got it in ${guessNumber} guesses.`;
+                return `The word was ${this.#solution.join('')}! You got it in ${guessNumber} guesses.`;
             case 2: 
-                return `So close! The word was ${this.solution.join('')}.`;
+                return `So close! The word was ${this.#solution.join('')}.`;
             default:
                 return 'Invalid status code.'
         }
