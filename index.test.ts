@@ -41,7 +41,21 @@ describe('checkValidWord function', () => {
 });
 
 describe('checkCorrectness function', () => {
-    it('should return ')
+    const testGame = new Game('reach');
+
+    // Assumes a guess has already been validated
+    it('should return a checkedGuess with all correct letters when "REACH" checked', () => {
+        expect(testGame.checkCorrectness('REACH').map(letter => letter.accuracy).every(val => val === 'correct')).toBe(true);
+    });
+
+    // Just for test purposes since it is only ever called with valid words
+    it('should return a checkedGuess with all wrongPosition letters when "ARCHE" checked', () => {
+        expect(testGame.checkCorrectness('ARCHE').map(letter => letter.accuracy).every(val => val === 'wrongPosition')).toBe(true);
+    });
+
+    it('should return a checkedGuess with all incorrect letters when "SNOUT" checked', () => {
+        expect(testGame.checkCorrectness('SNOUT').map(letter => letter.accuracy).every(val => val === 'incorrect')).toBe(true);
+    });
 });
 
 
