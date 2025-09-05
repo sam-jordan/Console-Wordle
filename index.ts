@@ -94,7 +94,7 @@ export default class Game {
         // Constructs an array of all previous guesses as strings for comparison
         const parsedGuess = ZodValidWord.safeParse(guess);
         const stringGuesses = this.guesses.map(guess => guess.map(guessLetter => guessLetter.character).join(''));
-        if (parsedGuess.success && validWords.indexOf(parsedGuess.data) !== -1 && stringGuesses.indexOf(parsedGuess.data) === -1) {
+        if (parsedGuess.success && validWords.includes(parsedGuess.data) && !stringGuesses.includes(parsedGuess.data)) {
             return parsedGuess.data;
         } else {
             // Won't actually be displayed, thrown to trigger the catch block
@@ -127,7 +127,7 @@ export default class Game {
         for (let i = 0; i < guess.length; i++) {
             if (comparison[i] !== '0') {
                 // If the letter isn't correct, but in the answer
-                if (comparison.indexOf(guess[i]) !== -1) {
+                if (comparison.includes(guess[i])) {
                     checkedGuess.splice(i, 1, {character: guess[i], accuracy: 'wrongPosition'});
                 } else {
                     // If the letter is wrong, add and update the set of wrong letters
