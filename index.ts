@@ -15,7 +15,7 @@ const rl = readline.createInterface({
 // Letter will hold the character and its display colour (based on level of correctness)
 interface Letter {
     character: string,
-    accuracy: string
+    accuracy: 'correct' | 'wrongPosition' | 'incorrect'
 };
 
 // A mapping between a letter's accuracy and the colour code used to display it
@@ -33,7 +33,7 @@ export default class Game {
     guesses: Letter[][] = [];
     wrongLetters: Set<string> = new Set();
     unusedLetters: Set<string>;
-    gameStatus: number = 0;
+    gameStatus: 0 | 1 | 2 = 0;
 
     /**
      * Class representing a single game of console-based Wordle.
@@ -149,7 +149,7 @@ export default class Game {
      * @param guessNumber - The number of the current guess 
      * @return A status code representing the current game state
      */
-    checkGameOver(guessNumber: number): number {
+    checkGameOver(guessNumber: number): 0 | 1 | 2 {
         // Gets an array of every letter's accuracy from the latest guess
         const latestGuessAccuracy = this.guesses.at(-1)?.map(guessLetter => guessLetter.accuracy);
         // If every character is correct, user wins
@@ -170,8 +170,8 @@ export default class Game {
         console.log('----------------------------');
         for (const i of this.guesses) {
             // Creates a string of the colour code for each letter
-            const colourString: string = i.map(guess => colourMapping[guess.accuracy] + '%s').join('') + '\x1b[0m';
-            const letters: string[] = i.map(guess => guess.character);
+            const colourString: string = i.map(letter => colourMapping[letter.accuracy] + '%s').join('') + '\x1b[0m';
+            const letters: string[] = i.map(letter => letter.character);
             // Displays the colour string and the array
             console.log(colourString, ...letters);
         }
@@ -186,14 +186,12 @@ export default class Game {
      * @param guessNumber - The number of the current guess
      * @returns - A message revealing the solution and the outcome of the game, or an error message
      */
-    getEndMessage(status: number, guessNumber: number): string {
+    getEndMessage(status: 1 | 2, guessNumber: number): string {
         switch(status) {
             case 1:
                 return `The word was ${this.#solution.join('')}! You got it in ${guessNumber} guesses.`;
             case 2: 
                 return `So close! The word was ${this.#solution.join('')}.`;
-            default:
-                return 'Invalid status code.'
         }
     }
 }

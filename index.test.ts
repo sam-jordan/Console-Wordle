@@ -97,8 +97,4 @@ describe('getEndMessage function', () => {
     it('should return a lose message when called with status code 2', () => {
         expect(testGame.getEndMessage(2, 3)).toBe(`So close! The word was REACH.`)
     });
-
-    it('should return invalid status code when called with 3', () => {
-        expect(testGame.getEndMessage(3, 3)).toBe('Invalid status code.')
-    });
 });
