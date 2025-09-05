@@ -1,9 +1,16 @@
 import { describe, it, expect, vi } from "vitest";
 import Game from "./index.js";
 
-const testGame = new Game();
-
 describe('checkValidGuess function', () => {
+    const testGame = new Game();
+    testGame.guesses.push([
+        {character: 'S', colour: '\x1b[33m'}, 
+        {character: 'M', colour: '\x1b[33m'}, 
+        {character: 'A', colour: '\x1b[33m'},
+        {character: 'R', colour: '\x1b[33m'},
+        {character: 'T', colour: '\x1b[33m'}
+    ]);
+
     it('should return a parsed string when "reach" submitted', () => {
         expect(testGame.checkValidGuess('reach')).toBe('REACH');
     });
@@ -28,13 +35,6 @@ describe('checkValidGuess function', () => {
         expect(() => testGame.checkValidGuess('ape')).toThrow();
     })
 
-    testGame.guesses.push([
-        {character: 'S', colour: '\x1b[33m'}, 
-        {character: 'M', colour: '\x1b[33m'}, 
-        {character: 'A', colour: '\x1b[33m'},
-        {character: 'R', colour: '\x1b[33m'},
-        {character: 'T', colour: '\x1b[33m'}
-    ]);
     it('should throw an error when "smart" submitted', () => {
         expect(() => testGame.checkValidGuess('smart')).toThrow();
     })
@@ -44,13 +44,51 @@ describe('checkValidGuess function', () => {
 describe('checkCorrectness function', () => {
     //it('should return ')
 });
-
-describe('checkGameOver function', () => {
-
-});
 */
 
+describe('checkGameOver function', () => {
+    const testGame = new Game();
+
+    it('should return 0 when guess number is 1', () => {
+        expect(testGame.checkGameOver(1)).toBe(0);
+    })
+
+    describe('checkGameOver game lost', () => {
+        testGame.guesses.push([
+            {character: 'S', colour: '\x1b[33m'}, 
+            {character: 'M', colour: '\x1b[33m'}, 
+            {character: 'A', colour: '\x1b[33m'},
+            {character: 'R', colour: '\x1b[33m'},
+            {character: 'T', colour: '\x1b[33m'}
+        ]);
+
+        it('should return 2 when guess number is 6 and the latest guess is incorrect', () => {
+            expect(testGame.checkGameOver(6)).toBe(2);
+        })
+    })
+
+    describe('checkGameOver game won', () => {
+        testGame.guesses.push([
+            {character: 'S', colour: '\x1b[32m'}, 
+            {character: 'M', colour: '\x1b[32m'}, 
+            {character: 'A', colour: '\x1b[32m'},
+            {character: 'R', colour: '\x1b[32m'},
+            {character: 'T', colour: '\x1b[32m'}
+        ]);
+
+        it('should return 1 when guess number is 2 and the latest guess is correct', () => {
+            expect(testGame.checkGameOver(2)).toBe(1);
+        })
+
+        it('should return 1 when guess number is 6 and the latest guess is correct', () => {
+            expect(testGame.checkGameOver(6)).toBe(1);
+        })
+    });
+});
+
 describe('getEndMessage function', () => {
+    const testGame = new Game();
+    
     it('should return a win message when called with status code 1', () => {
         expect(testGame.getEndMessage(1, 3)).toBe(`The word was ${testGame.solution.join('')}! You got it in 3 guesses.`)
     })
