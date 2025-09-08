@@ -97,7 +97,7 @@ export default class Game {
         if (parsedGuess.success && validWords.includes(parsedGuess.data) && !stringGuesses.includes(parsedGuess.data)) {
             return parsedGuess.data;
         } else {
-            // Won't actually be displayed, thrown to trigger the catch block
+            // Won't actually be displayed, thrown to trigger the catch blocks
             throw new Error('Invalid word!');
         }
     }

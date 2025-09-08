@@ -11,30 +11,37 @@ describe('checkValidWord function', () => {
         {character: 'T', accuracy: 'correct'}
     ]);
 
+    // Checks that valid words are accepted
     it('should return a parsed string when "reach" submitted', () => {
         expect(testGame.checkValidWord('reach')).toBe('REACH');
     });
 
+    // Checks that letter cases are ignored
     it('should return a parsed string when "TOucH" submitted', () => {
         expect(testGame.checkValidWord('TOucH')).toBe('TOUCH');
     });
 
+    // Checks that guesses containing non-letters are rejected
     it('should throw an error when "12345" submitted', () => {
         expect(() => testGame.checkValidWord('12345')).toThrow();
     });
 
+    // Checks that guesses that are not real words are rejected
     it('should throw an error when "aaaaa" submitted', () => {
         expect(() => testGame.checkValidWord('aaaaa')).toThrow();
     });
 
+    // Checks that guesses longer than 5 letters are rejected
     it('should throw an error when "nights" submitted', () => {
         expect(() => testGame.checkValidWord('nights')).toThrow();
     });
 
+    // Checks that guesses shorter than 5 letters are rejected
     it('should throw an error when "ape" submitted', () => {
         expect(() => testGame.checkValidWord('ape')).toThrow();
     });
 
+    // Checks that repeat guesses are rejected
     it('should throw an error when "smart" submitted', () => {
         expect(() => testGame.checkValidWord('smart')).toThrow();
     });
@@ -105,10 +112,10 @@ describe('getEndMessage function', () => {
     const testGame = new Game('reach');
     
     it('should return a win message when called with status code 1', () => {
-        expect(testGame.getEndMessage(1, 3)).toBe(`The word was REACH! You got it in 3 guesses.`)
+        expect(testGame.getEndMessage(1, 3)).toBe(`The word was REACH! You got it in 3 guesses.`);
     });
 
     it('should return a lose message when called with status code 2', () => {
-        expect(testGame.getEndMessage(2, 3)).toBe(`So close! The word was REACH.`)
+        expect(testGame.getEndMessage(2, 3)).toBe(`So close! The word was REACH.`);
     });
 });
